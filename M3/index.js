@@ -1,31 +1,43 @@
+//O express me permite usar o módulo html
 const express = require('express')
 const app = express()
-const handlebars = require('express-handlebars')
-const Sequelize = require('sequelize')
-const sequelize = new Sequelize('sistema_de_cadastro', 'root', '', {
-    host:'localhost',
-    dialect:'mysql'
-})
 
+//O handlebars me permite criar templates de html
+const handlebars = require('express-handlebars')
+
+//O body-parser me permite pegar uma informação de um input do html
+const bodyParser =  require('body-parser')
+
+//Pego o método Post do meu arquivo
+const Post = require('./models/Post')
 // Config
   //template engine
     app.engine('handlebars', handlebars({defaultLayout: 'main'}))
     app.set('view engine', 'handlebars')
-
-  //Conexão com o bd mysql
-    sequelize.authenticate().then(()=>{
-      console.log('Concetado com sucesso')
-    }).catch(function(erro){
-      console.log(`Falha ao se conectar: ${erro}`)
-    })
+  
+  //BodyParser
+    //configurando o body-parser
+    app.use(bodyParser.urlencoded({extended:false}))
+    app.use(bodyParser.json())
 
 //Rotas
-    app.get('/cad', function(req, res){
-      res.render('formulario')
+    app.get('/', function(req, res){
+      res.render('home')
     })
 
-    app.post('/add', function(req, res){
-      res.send('FORMULÁRIO RECEBIDO')
+    app.get('/cad', function(req, res){//O método getcria uma sequência de consulta(query string) e a acrescenta à URL do script no servidor que manipula a solicitação.
+      res.render('formulario')//O 'render' renderiza o html do handlebars
+    })
+
+    app.post('/add', function(req, res){//O método Post cria um par nome/valor que são passados no corpo da mensagem de pedido HTTP.
+      Post.create({
+        titulo: req.body.titulo,
+        conteudo: req.body.conteudo
+      }).then(()=>{
+        res.redirect('/')//'redirect' me direciona a uma rota
+      }).catch(function(error){
+        res.send(`Falha ao criar: ${error}`)
+      })
     })
 
 app.listen(8081, () => { //inícia o servidor na porta inserida
