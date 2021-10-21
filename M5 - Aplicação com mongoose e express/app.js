@@ -4,7 +4,7 @@
     const handlebars = require('express-handlebars')
     const bodyParser = require('body-parser')
     const path = require('path')
-    //const mongoose = require('mongoose')
+    const mongoose = require('mongoose')
 
 // Assets 
     // body-parser
@@ -16,13 +16,19 @@
         app.set('view engine', 'handlebars')
     
     // mongosse
-        //Loading...
+        mongoose.connect('mongodb://localhost/blog').then(()=>{
+            console.log('Conectado ao mongo')
+        }).catch((err)=>{
+            console.log(`Falha ao conectar: ${err}`);
+        })
 
     // Public
         app.use(express.static(path.join(__dirname,'public')))
+
 // Routes
     const admin = require('./routes/admin')
     app.use('/admin', admin)
+    
 // Misc
 const PORT = 8081
 app.listen(PORT, ()=>{
