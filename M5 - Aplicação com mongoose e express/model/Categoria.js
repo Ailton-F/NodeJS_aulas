@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const { STRING } = require('sequelize/types')
 const schema = mongoose.Schema
 
 const categoriaSchema = new schema({
@@ -17,4 +16,4 @@ const categoriaSchema = new schema({
     }
 })
 
-mongoose.model('categorias', Categoria)
+mongoose.model('categorias', categoriaSchema)
