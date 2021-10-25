@@ -1,0 +1,25 @@
+<div class="container">
+    <h1 class="display-4">Bem vindo ao meu blog</h1>
+    <p class="lead">Esse Blog foi criado a partir de um curso de node</p>
+    <hr class="my-4">
+    <p>Várias linhas de código para criar um site com cadastro e exclusão de registros, venha testar!</p>
+    <p class="lead">
+        <button class="btn btn-primary btn-lg" role="button">Resgistre-se!</button>
+    </p>
+</div>
+<hr>
+<h2 class="display-6">Postagens recentes</h2>
+{{#each posts}}
+    <div class="card mt-3">
+        <div class="card-body">
+            <h3>{{titulo}}</h3>
+            <p>{{descricao}}</p>
+            <a href="/posts/{{slug}}"><button class="btn btn-info btn-sm">Leia mais</button></a>
+            <hr>
+            <small>Categoria: {{categoria.nome}}</small> <br>
+            <small>Data de publicação: {{data}}</small>
+        </div>
+    </div>
+{{else}}
+    <h5>Nenhuma postagem</h5>
+{{/each}}
