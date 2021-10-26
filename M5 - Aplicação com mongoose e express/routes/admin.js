@@ -5,12 +5,13 @@ require('../model/Categoria')
 const Categoria = mongoose.model('categorias')
 require('../model/posts')
 const Post = mongoose.model('posts')
-
-router.get('/', (req, res)=>{
+const {eAdmin} = require('../helper/eAdmin')
+    
+router.get('/', eAdmin,(req, res)=>{
     res.render('admin/index')
 })
 //CATEGORIAS
-    router.get('/categorias', (req, res)=>{
+    router.get('/categorias', eAdmin, (req, res)=>{
         Categoria.find().sort({date:'desc'}).then((categorias)=>{
             res.render('admin/categorias',{categorias:categorias.map(categorias => categorias.toJSON())})
         }).catch((err)=>{
@@ -20,11 +21,11 @@ router.get('/', (req, res)=>{
         //res.render('admin/categorias') NUNCA USE O 'Res.send' 2 VEZES
     })
 
-    router.get('/categorias/add', (req, res)=>{
+    router.get('/categorias/add', eAdmin, (req, res)=>{
         res.render('admin/addcategoria')
     })
 
-    router.post('/categorias/nova', (req, res)=>{
+    router.post('/categorias/nova', eAdmin, (req, res)=>{
         let errors = []
         //Nome errors    
             if(!req.body.nome || typeof req.body.nome == undefined || req.body.nome == null || req.body.nome.length < 2){
@@ -55,7 +56,7 @@ router.get('/', (req, res)=>{
             } 
     })
 
-    router.get('/categorias/edit/:id', (req, res)=>{
+    router.get('/categorias/edit/:id', eAdmin, (req, res)=>{
         Categoria.findOne({_id: req.params.id}).lean().then((categorias)=>{
             res.render('admin/editcategorias',{categorias:categorias})
         }).catch((err)=>{
@@ -65,7 +66,7 @@ router.get('/', (req, res)=>{
     })
 
 
-    router.post('/categorias/edit', (req, res)=>{
+    router.post('/categorias/edit', eAdmin, (req, res)=>{
         Categoria.findOne({_id: req.body.id}, (error, result) => {
             if(error){
                 req.flash('err_msg', 'Falha ao encontrar registro')
@@ -102,7 +103,7 @@ router.get('/', (req, res)=>{
         })
     })
 
-    router.post('/categorias/edit/delet', (req, res) => {
+    router.post('/categorias/edit/delet', eAdmin, (req, res) => {
         Categoria.findOneAndRemove({_id: req.body.id}, (err) => {
             if(err){
                 req.flash('err_msg', `Erro ao deletar categoria: ${err}`)
@@ -115,7 +116,7 @@ router.get('/', (req, res)=>{
     })
 
 //POSTS
-    router.get('/posts', (req, res)=>{
+    router.get('/posts', eAdmin,(req, res)=>{
         Post.find().populate("categoria").sort({data:'desc'}).then((posts)=>{
             res.render('admin/posts',{posts:posts.map(posts => posts.toJSON())})
         }).catch((err)=>{
@@ -124,7 +125,7 @@ router.get('/', (req, res)=>{
         })
     })
 
-    router.get('/posts/add', (req, res) => {
+    router.get('/posts/add', eAdmin,(req, res) => {
         Categoria.find((err, categorias)=>{
             if(err){
                 req.flash('err_msg', 'Erro ao carregar formulário')
@@ -135,7 +136,7 @@ router.get('/', (req, res)=>{
         }).lean()
     })
 
-    router.post('/posts/nova', (req, res) => {
+    router.post('/posts/nova', eAdmin,(req, res) => {
         let error = []
 
         if(req.body.categoria == 0){
@@ -166,7 +167,7 @@ router.get('/', (req, res)=>{
         }
     })
 
-    router.get('/posts/edit/:id', (req, res) => {
+    router.get('/posts/edit/:id', eAdmin,(req, res) => {
         Post.findOne({_id:req.params.id}, (err, post)=>{
             if(err){
                 req.flash('err_msg', 'Houve um erro ao encontrar o post')
@@ -184,7 +185,7 @@ router.get('/', (req, res)=>{
         }).lean()
     })
 
-    router.post('/posts/edit', (req, res) => {
+    router.post('/posts/edit', eAdmin,(req, res) => {
             Post.findOne({_id:req.body.id}, (err, post)=>{
                 if(err){
                     req.flash('err_msg', 'Erro ao encontrar o post')

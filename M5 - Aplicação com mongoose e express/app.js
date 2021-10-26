@@ -11,20 +11,28 @@
     const Post = mongoose.model('posts')
     require('./model/Categoria')
     const Categoria = mongoose.model('categorias')
+    const passport = require('passport')
+    require('./config/auth')(passport)
 
 // Assets 
-    //Session Flash
+    //Session 
         app.use(session({
             secret: 'key1',
             resave: true,
             saveUninitialized: true
         }))
-        app.use(flash())
+        //Passport
+            app.use(passport.initialize())
+            app.use(passport.session())
+        //Flash
+            app.use(flash())
 
     //Middleware
         app.use((req, res, next)=>{
             res.locals.success_msg = req.flash('success_msg')
             res.locals.err_msg = req.flash('err_msg')  
+            res.locals.error = req.flash('error')
+            res.locals.user = req.user || null  
             next()  
         })
 
@@ -110,6 +118,8 @@
 
     const admin = require('./routes/admin')
     app.use('/admin', admin)
+    const users = require('./routes/user')
+    app.use('/user', users)
     
 // Misc
 const PORT = 8081
